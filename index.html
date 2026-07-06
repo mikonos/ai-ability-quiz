@@ -1,0 +1,1433 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AI 能力快测局</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23a5ff3f'/%3E%3Cpath d='M16 43 31 12l17 40-17-10z' fill='%2311130f'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --ink: #11130f;
+      --paper: #f7f6ef;
+      --paper-2: #ffffff;
+      --line: rgba(17, 19, 15, .14);
+      --muted: #666b5e;
+      --green: #a5ff3f;
+      --blue: #2f8cff;
+      --coral: #ff695c;
+      --yellow: #ffd84d;
+      --violet: #8c6bff;
+      --shadow: 0 18px 50px rgba(17, 19, 15, .16);
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Avenir Next", "Gill Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        linear-gradient(90deg, rgba(17, 19, 15, .045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(17, 19, 15, .045) 1px, transparent 1px),
+        radial-gradient(circle at 12% 8%, rgba(165, 255, 63, .48), transparent 24%),
+        radial-gradient(circle at 88% 6%, rgba(47, 140, 255, .2), transparent 26%),
+        linear-gradient(135deg, #f9f7ee 0%, #eff3ea 100%);
+      background-size: 28px 28px, 28px 28px, auto, auto, auto;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    button {
+      border: 0;
+      color: inherit;
+      font: inherit;
+    }
+
+    .app {
+      width: min(960px, 100%);
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: max(18px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border: 2px solid var(--ink);
+      border-radius: 11px;
+      background:
+        linear-gradient(135deg, var(--green) 0 48%, var(--yellow) 48% 62%, var(--blue) 62% 100%);
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: rotate(-4deg);
+      flex: 0 0 auto;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .brand-subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .status-pill {
+      min-width: 86px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .72);
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      backdrop-filter: blur(14px);
+    }
+
+    .stage {
+      display: grid;
+      align-items: stretch;
+    }
+
+    .screen {
+      display: none;
+      min-height: 0;
+    }
+
+    .screen.active {
+      display: grid;
+      align-content: center;
+      gap: 18px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 20px;
+      padding: 22px 0 8px;
+    }
+
+    .hero-kicker,
+    .section-kicker {
+      width: fit-content;
+      padding: 7px 10px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      font-size: clamp(44px, 13vw, 96px);
+      line-height: .86;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 610px;
+      color: #363930;
+      font-size: clamp(16px, 4.2vw, 22px);
+      line-height: 1.5;
+      font-weight: 650;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .metric-tile {
+      min-height: 86px;
+      padding: 12px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: var(--paper-2);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .metric-tile strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .metric-tile span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .metric-tile:nth-child(2) { background: #dff0ff; }
+    .metric-tile:nth-child(3) { background: #fff0b7; }
+
+    .primary-action,
+    .secondary-action,
+    .ghost-action {
+      min-height: 52px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 13px 18px;
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+      touch-action: manipulation;
+    }
+
+    .primary-action:focus-visible,
+    .secondary-action:focus-visible,
+    .ghost-action:focus-visible,
+    .choice:focus-visible,
+    summary:focus-visible {
+      outline: 3px solid var(--blue);
+      outline-offset: 4px;
+    }
+
+    .primary-action:disabled,
+    .secondary-action:disabled,
+    .ghost-action:disabled {
+      cursor: not-allowed;
+      opacity: .52;
+      transform: none;
+      box-shadow: 3px 3px 0 rgba(17, 19, 15, .25);
+    }
+
+    .primary-action {
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 5px 5px 0 var(--green);
+    }
+
+    .secondary-action {
+      background: var(--green);
+      color: var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .ghost-action {
+      background: rgba(255, 255, 255, .68);
+      color: var(--ink);
+      box-shadow: 4px 4px 0 rgba(17, 19, 15, .28);
+    }
+
+    .primary-action:active,
+    .secondary-action:active,
+    .ghost-action:active,
+    .choice:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .hero-actions,
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .quiz-shell {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      padding-bottom: 8px;
+    }
+
+    .progress-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .progress-track {
+      height: 13px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--blue), var(--coral));
+      transition: width .24s ease;
+    }
+
+    .question-panel {
+      display: grid;
+      gap: 16px;
+      padding: 18px;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, .86);
+      box-shadow: var(--shadow), 6px 6px 0 var(--ink);
+    }
+
+    .question-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .dimension-chip {
+      max-width: 52%;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f4f4ef;
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .question-title {
+      font-size: clamp(23px, 7vw, 40px);
+      line-height: 1.08;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .question-context {
+      color: #40443a;
+      font-size: 15px;
+      line-height: 1.55;
+      font-weight: 650;
+    }
+
+    .choices {
+      display: grid;
+      gap: 10px;
+    }
+
+    .choice {
+      width: 100%;
+      min-height: 66px;
+      padding: 13px 14px;
+      border: 2px solid var(--ink);
+      border-radius: 9px;
+      background: #fff;
+      box-shadow: 4px 4px 0 rgba(17, 19, 15, .2);
+      cursor: pointer;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .choice:hover {
+      background: #f8ffe9;
+    }
+
+    .choice[aria-checked="true"] {
+      background: #edffd0;
+      box-shadow: 2px 2px 0 var(--ink);
+      transform: translate(2px, 2px);
+    }
+
+    .choice-key {
+      width: 34px;
+      height: 34px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--yellow);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 950;
+    }
+
+    .choice-text {
+      font-size: 15px;
+      line-height: 1.42;
+      font-weight: 750;
+    }
+
+    .micro-feedback {
+      min-height: 46px;
+      padding: 12px 14px;
+      border: 1px dashed rgba(17, 19, 15, .38);
+      border-radius: 9px;
+      color: #3d4437;
+      background: rgba(165, 255, 63, .14);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .quiz-actions {
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+      gap: 10px;
+    }
+
+    .result-layout {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .result-card {
+      position: relative;
+      overflow: hidden;
+      padding: 18px;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .92), rgba(245, 251, 231, .94)),
+        linear-gradient(90deg, rgba(17, 19, 15, .045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(17, 19, 15, .045) 1px, transparent 1px);
+      background-size: auto, 22px 22px, 22px 22px;
+      box-shadow: var(--shadow), 6px 6px 0 var(--ink);
+    }
+
+    .result-card::before {
+      content: "";
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      right: -42px;
+      top: -42px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--coral);
+      opacity: .92;
+    }
+
+    .result-header,
+    .score-row,
+    .bars,
+    .advice-list,
+    .share-preview {
+      position: relative;
+      z-index: 1;
+    }
+
+    .result-header {
+      display: grid;
+      gap: 10px;
+      padding-right: 56px;
+    }
+
+    .sample-badge,
+    .style-chip {
+      width: fit-content;
+      padding: 7px 10px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--yellow);
+      color: var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .result-type {
+      font-size: clamp(34px, 10vw, 66px);
+      line-height: .92;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .result-summary {
+      color: #353a31;
+      font-size: 15px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: .95fr 1.4fr;
+      gap: 12px;
+      margin-top: 16px;
+      align-items: stretch;
+    }
+
+    .score-box,
+    .persona-box {
+      padding: 13px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 4px 4px 0 rgba(17, 19, 15, .18);
+    }
+
+    .score-box strong {
+      display: block;
+      font-size: 46px;
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .score-box span,
+    .persona-box span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-weight: 800;
+    }
+
+    .persona-box strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.15;
+      font-weight: 950;
+    }
+
+    .persona-box .style-chip {
+      margin-top: 12px;
+      background: #dff0ff;
+      box-shadow: none;
+    }
+
+    .result-quick-actions {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .bars {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .bar-item {
+      display: grid;
+      grid-template-columns: 86px 1fr 34px;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .bar-track {
+      height: 12px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      background: var(--green);
+    }
+
+    .bar-item:nth-child(2) .bar-fill { background: var(--blue); }
+    .bar-item:nth-child(3) .bar-fill { background: var(--coral); }
+    .bar-item:nth-child(4) .bar-fill { background: var(--yellow); }
+    .bar-item:nth-child(5) .bar-fill { background: var(--violet); }
+    .bar-item:nth-child(6) .bar-fill { background: #31d7a9; }
+
+    .advice-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .advice {
+      padding: 11px 12px;
+      border-left: 5px solid var(--ink);
+      background: rgba(255, 255, 255, .74);
+      color: #34382f;
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 720;
+    }
+
+    .scoring-note {
+      position: relative;
+      z-index: 1;
+      margin-top: 16px;
+      border: 2px solid var(--ink);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, .78);
+      box-shadow: 4px 4px 0 rgba(17, 19, 15, .18);
+      overflow: hidden;
+    }
+
+    .scoring-note summary {
+      cursor: pointer;
+      padding: 13px 14px;
+      font-weight: 950;
+      list-style-position: inside;
+    }
+
+    .scoring-body {
+      display: grid;
+      gap: 12px;
+      padding: 0 14px 14px;
+      color: #34382f;
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .scoring-body ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .answer-review {
+      display: grid;
+      gap: 8px;
+    }
+
+    .answer-review-item {
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .answer-review-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+
+    .compact-action {
+      min-height: 44px;
+      padding: 10px 14px;
+      justify-self: start;
+    }
+
+    .share-preview {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .share-preview canvas {
+      width: min(260px, 100%);
+      aspect-ratio: 3 / 4;
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 5px 5px 0 var(--ink);
+      justify-self: center;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(16px);
+      max-width: min(360px, calc(100vw - 32px));
+      padding: 11px 14px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 5px 5px 0 var(--green);
+      font-size: 13px;
+      font-weight: 850;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 20;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (min-width: 760px) {
+      .app {
+        padding: 28px 28px 38px;
+      }
+
+      .hero {
+        grid-template-columns: 1.1fr .9fr;
+        align-items: center;
+      }
+
+      .hero-main {
+        display: grid;
+        gap: 22px;
+      }
+
+      .hero-grid {
+        align-self: end;
+      }
+
+      .hero-actions,
+      .result-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .question-panel,
+      .result-card {
+        padding: 24px;
+      }
+
+      .choices {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .choice {
+        min-height: 104px;
+        align-items: start;
+      }
+
+      .result-layout {
+        grid-template-columns: 1.1fr .9fr;
+        align-items: start;
+      }
+
+      .result-actions {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .app { padding-left: 12px; padding-right: 12px; }
+      .brand-title { font-size: 16px; }
+      .status-pill { min-width: 72px; padding-inline: 8px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .score-row { grid-template-columns: 1fr; }
+      .bar-item { grid-template-columns: 78px 1fr 30px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand" aria-label="AI 能力快测局">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <p class="brand-title">AI 能力快测局</p>
+          <p class="brand-subtitle">SNAP TEST</p>
+        </div>
+      </div>
+      <div class="status-pill" id="statusPill">READY</div>
+    </header>
+
+    <section class="stage">
+      <div class="screen active" id="startScreen">
+        <div class="hero">
+          <div class="hero-main">
+            <div class="hero-kicker">AI ABILITY SNAP TEST</div>
+            <h1>你是 AI 玩家，还是 AI 项目经理？</h1>
+            <div class="hero-actions">
+              <button class="primary-action" id="startBtn">开始快测</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="quizScreen">
+        <div class="quiz-shell">
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span id="progressText">第 1 / 10 题</span>
+              <span id="paceText"></span>
+            </div>
+            <div class="progress-track" id="progressTrack" role="progressbar" aria-labelledby="progressText" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10"><div class="progress-bar" id="progressBar"></div></div>
+          </div>
+
+          <article class="question-panel">
+            <div class="question-label">
+              <span id="questionCode">ROUND 01</span>
+              <span class="dimension-chip" id="dimensionChip">任务表达</span>
+            </div>
+            <h2 class="question-title" id="questionTitle" tabindex="-1"></h2>
+            <div class="choices" id="choices" role="radiogroup" aria-labelledby="questionTitle" aria-describedby="microFeedback"></div>
+            <p class="micro-feedback" id="microFeedback" aria-live="polite"></p>
+            <div class="quiz-actions">
+              <button class="ghost-action" id="prevBtn" type="button">上一题</button>
+              <button class="primary-action" id="nextBtn" type="button" disabled>下一题</button>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="screen" id="resultScreen">
+        <div class="result-layout">
+          <article class="result-card" id="resultCard">
+            <div class="section-kicker">YOUR AI MODE</div>
+            <div class="result-header">
+              <p class="sample-badge" id="sampleBadge" hidden>示例结果 · 非本人测评</p>
+              <h2 class="result-type" id="resultType" tabindex="-1"></h2>
+              <p class="result-summary" id="resultSummary"></p>
+            </div>
+
+            <div class="score-row">
+              <div class="score-box">
+                <strong id="resultScore">0</strong>
+                <span>AI 工作力指数 / 100</span>
+              </div>
+              <div class="persona-box">
+                <strong id="resultPersona"></strong>
+                <span id="resultPersonaNote"></span>
+                <span class="style-chip" id="styleMode"></span>
+              </div>
+            </div>
+
+            <div class="result-quick-actions">
+              <button class="secondary-action" id="downloadTopBtn">保存分享图</button>
+            </div>
+
+            <div class="bars" id="bars"></div>
+          </article>
+
+          <aside class="share-preview">
+            <canvas id="shareCanvas" width="1080" height="1440" aria-label="测评结果分享图预览"></canvas>
+          </aside>
+
+          <div class="result-actions">
+            <button class="secondary-action" id="downloadBtn">保存分享图</button>
+            <button class="ghost-action" id="restartBtn">重新测一次</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const dimensions = {
+      framing: "任务表达",
+      prompt: "Prompt 设计",
+      research: "深度研究",
+      judgment: "结果判断",
+      workflow: "工具流",
+      risk: "风险意识"
+    };
+
+    const questions = [
+      {
+        dim: "framing",
+        title: "老板说：明天给我一份竞品分析。你第一步怎么用 AI？",
+        context: "信息不全、时间很短。高手不会急着让 AI 写报告，而是先把任务变成可验收的工作。",
+        options: [
+          { text: "先让 AI 生成一版竞品分析大纲和假设，再拿给老板确认方向。", scores: { framing: 1, prompt: 1 }, style: "apprentice", feedback: "这是能启动的半步，但还没把证据和验收口径锁住。" },
+          { text: "先用 10 分钟写 brief：目标、受众、竞品名单、比较维度、证据来源、交付格式和验收标准，再让 AI 补缺口。", scores: { framing: 3, prompt: 2, judgment: 1 }, style: "director", feedback: "这像导演开拍前定分镜：模型可以干活，但不能替你定片子。" },
+          { text: "把官网、定价页、落地页截图都丢给 AI，不设维度，让它自己判断重点。", scores: { research: 1, risk: 1 }, style: "explorer", feedback: "素材很多，但选择权已经滑到模型手里。" },
+          { text: "直接让 AI 生成一份 5000 字竞品分析，先有东西再说。", scores: { prompt: 1 }, style: "sprinter", feedback: "速度有了，但验收口径还没上桌。" }
+        ]
+      },
+      {
+        dim: "prompt",
+        title: "你把一份 80 页行业 PDF 给 AI，总结成老板能看的结论。哪个 Prompt 最靠谱？",
+        context: "长上下文不是把文件全塞进去等奇迹，而是给模型问题、结构、证据和不确定边界。",
+        options: [
+          { text: "总结一下，越全面越好。", scores: { prompt: 1 }, style: "sprinter", feedback: "全面很容易变成一锅粥，老板看不到可判断的结论。" },
+          { text: "先让 AI 自己读完全文，挑它觉得最重要的 10 点。", scores: { research: 1 }, style: "explorer", feedback: "有发现感，但问题定义仍然缺席。" },
+          { text: "先给问题清单和输出结构，要求每条结论标页码/段落证据，并区分事实、推断和不确定。", scores: { prompt: 3, research: 2, judgment: 1 }, style: "director", feedback: "这才是长文档任务的 leash：结论必须拴回证据。" },
+          { text: "让 AI 先写摘要，再让另一个 AI 检查有没有漏。", scores: { prompt: 1, judgment: 1 }, style: "detective", feedback: "第二意见有用，但仍要先定义问题和引用规则。" }
+        ]
+      },
+      {
+        dim: "research",
+        title: "AI 给出两份互相矛盾的市场规模数字，你怎么处理？",
+        context: "深研能力的关键不是搜到更多，而是知道证据等级、口径差异和可引用边界。",
+        options: [
+          { text: "取更大的数字，因为汇报里更有想象空间。", scores: {}, style: "sprinter", feedback: "这会让报告变兴奋，也会让证据变危险。" },
+          { text: "要求 AI 列出来源、时间、统计口径、包含范围，再把不可比的数字分开呈现。", scores: { research: 3, judgment: 2, risk: 1 }, style: "detective", feedback: "这就是研究者的反射：先拆口径，再谈结论。" },
+          { text: "让 AI 再搜 10 个数字，取平均值。", scores: { research: 1 }, style: "explorer", feedback: "平均值不能修复口径错误。" },
+          { text: "优先采用 Gartner、IDC、艾瑞这类权威机构数字，其他来源不放。", scores: { research: 1, judgment: 1 }, style: "apprentice", feedback: "权威不等于同口径，名字大也要拆定义。" }
+        ]
+      },
+      {
+        dim: "judgment",
+        title: "AI 写出的方案很顺，但你隐约觉得哪里不对。下一步？",
+        context: "会用 AI 的人，不是相信每个流畅段落，而是会给模型设置反方和验收门。",
+        options: [
+          { text: "让 AI 自己检查一遍有没有问题。", scores: { judgment: 1, prompt: 1 }, style: "apprentice", feedback: "比不查好，但同一个脑袋容易放过同一个洞。" },
+          { text: "改得更保守一点，减少出错。", scores: { risk: 1 }, style: "sprinter", feedback: "保守不是验证，可能只是把问题藏小。" },
+          { text: "直接发给同事，让他们自己看哪里有问题。", scores: { judgment: 1 }, style: "operator", feedback: "人脑很重要，但你还没给同事准备审查清单。" },
+          { text: "让 AI 扮演 CFO、法务、用户各挑 3 个反对点，列出需数据/真人核实项，再带着审查清单找同事。", scores: { judgment: 3, prompt: 2, risk: 2 }, style: "director", feedback: "这是把模型变成预审台，再把人放回关键 verifier 位置。" }
+        ]
+      },
+      {
+        dim: "workflow",
+        title: "每周你都要做同一类周报，AI 能帮到哪一步？",
+        context: "工具流能力看的是：能否把一次聊天变成可复用流程，而不是每周从零开聊。",
+        options: [
+          { text: "每周复制上周 Prompt，重新让 AI 写。", scores: { prompt: 1, workflow: 1 }, style: "sprinter", feedback: "这是手动挡 AI，已经比不用强。" },
+          { text: "把所有聊天记录给 AI，让它自己总结规律。", scores: { research: 1, workflow: 1 }, style: "explorer", feedback: "可能有灵感，但流程边界仍然模糊。" },
+          { text: "沉淀模板：输入材料清单、固定分析维度、异常检查、输出格式、人工确认点，并保留 2 个好坏样例复测。", scores: { workflow: 3, framing: 2, judgment: 1 }, style: "operator", feedback: "你在搭流水线，还给它加了回归测试。" },
+          { text: "用最强模型写，质量自然会稳定。", scores: { judgment: 1 }, style: "apprentice", feedback: "模型强不等于流程稳。" }
+        ]
+      },
+      {
+        dim: "risk",
+        title: "你准备把用户访谈原文丢给 AI 总结，最该先做什么？",
+        context: "AI 能力越强，越要有数据边界。风险意识不是刹车，是护栏。",
+        options: [
+          { text: "直接上传，反正只是内部分析。", scores: {}, style: "sprinter", feedback: "内部不等于无风险，原文也不是天然可上传。" },
+          { text: "确认授权和工具数据政策，按最小必要原则脱敏，要求输出区分原话引用、改写总结和模型推断，禁止补造原话。", scores: { risk: 3, judgment: 2, prompt: 1 }, style: "guardian", feedback: "这是真护栏：数据、工具、输出三层都控住。" },
+          { text: "只告诉 AI 大概意思，不给原文。", scores: { risk: 1, research: 1 }, style: "apprentice", feedback: "安全一点，但会丢失可审计证据。" },
+          { text: "让 AI 保证不要泄露。", scores: {}, style: "explorer", feedback: "保证不是机制，像让门自己当锁。" }
+        ]
+      },
+      {
+        dim: "workflow",
+        title: "你要让 Agent 跑 30 分钟资料整理，怎样避免跑偏？",
+        context: "Agent 协作不是放生。好任务会有检查点、停止条件和证据位置。",
+        options: [
+          { text: "先让 Agent 跑起来，20 分钟后看结果，不行再返工。", scores: { workflow: 1 }, style: "sprinter", feedback: "Agent 很努力，但努力方向可能错。" },
+          { text: "换一个更强模型试试，强模型应该更少跑偏。", scores: { judgment: 1 }, style: "explorer", feedback: "可能改善，但问题不一定在模型。" },
+          { text: "把任务拆给 3 个 Agent 并行，谁做得好用谁的。", scores: { workflow: 1, risk: 1 }, style: "director", feedback: "并行前先要边界，否则只是同时跑偏。" },
+          { text: "开跑前写清目标、范围、可用工具/禁止动作、证据位置、预算、10 分钟 checkpoint 和停止条件；偏离即停机重定向。", scores: { workflow: 3, framing: 2, risk: 2 }, style: "operator", feedback: "这就是 Agent 版项目管理：给自主性，也给刹车。" }
+        ]
+      },
+      {
+        dim: "judgment",
+        title: "AI 生成了一份数据图表，你怎样判断能不能放进汇报？",
+        context: "输出判断能力不是审美，是追溯输入、计算逻辑、异常值和业务解释。",
+        options: [
+          { text: "图表看着清楚就可以，汇报要抓重点。", scores: {}, style: "sprinter", feedback: "清楚的错图最危险。" },
+          { text: "让另一个 AI 评价图表是否专业。", scores: { judgment: 1, prompt: 1 }, style: "explorer", feedback: "第二意见有帮助，但不能替代源数据审计。" },
+          { text: "抽查源数据、重算关键公式、核对轴和单位、样本口径，要求 AI 解释 2 个异常点，再人工复核关键数字。", scores: { judgment: 3, research: 2, risk: 1 }, style: "detective", feedback: "这是把漂亮图表送进审计台。" },
+          { text: "让 AI 把图表换得更高级一点。", scores: { prompt: 1 }, style: "apprentice", feedback: "高级视觉不能替代可信数字。" }
+        ]
+      },
+      {
+        dim: "risk",
+        title: "AI 可以帮你批量改 CRM 客户状态，你怎么设任务？",
+        context: "工具调用一旦连到真实系统，就不是聊天了。高手会先做只读预检、权限边界和回滚设计。",
+        options: [
+          { text: "先只读预检：列出拟修改记录、字段、理由、影响范围和回滚方式，人工确认后再执行并留日志。", scores: { risk: 3, workflow: 2, judgment: 2 }, style: "guardian", feedback: "这才像真实系统操作：先看、再批、可回滚。" },
+          { text: "直接让 AI 批量修改，错了再回滚。", scores: { workflow: 1 }, style: "sprinter", feedback: "回滚不是许愿，先得知道改了什么。" },
+          { text: "让 AI 写一条修改规则，然后你自己批量执行。", scores: { framing: 1, risk: 1 }, style: "operator", feedback: "人执行不等于安全，规则仍要预检。" },
+          { text: "先在一条记录上试跑，成功了就全量执行。", scores: { workflow: 1, judgment: 1 }, style: "apprentice", feedback: "试跑有价值，但还缺影响范围、确认和回滚日志。" }
+        ]
+      },
+      {
+        dim: "framing",
+        title: "团队想提升 AI 能力，你会先推什么？",
+        context: "真正的 AI 能力提升，最终要回到岗位任务、共同标准和可复测训练。",
+        options: [
+          { text: "发一份 Prompt 大全，让大家自由练习。", scores: { prompt: 1 }, style: "apprentice", feedback: "材料有用，但迁移到工作还差一座桥。" },
+          { text: "买最流行的 AI 工具，让大家先用起来。", scores: { workflow: 1 }, style: "sprinter", feedback: "工具能点火，但不能自动形成能力。" },
+          { text: "先找公司里最会用 AI 的人做分享，大家听完各自自由实践。", scores: { research: 1, workflow: 1 }, style: "explorer", feedback: "能传播经验，但还要变成可练习的任务。" },
+          { text: "选 3 个高频岗位任务，沉淀好坏样例库、评分表、复测周期和复盘机制。", scores: { framing: 3, workflow: 2, judgment: 2 }, style: "director", feedback: "这不是培训，是能力基建。" }
+        ]
+      }
+    ];
+
+    const resultTypes = [
+      {
+        id: "director",
+        min: 82,
+        type: "AI 总导演",
+        persona: "会派活，也会验收",
+        note: "你不把 AI 当魔法棒，而是当一支需要 brief、镜头表和剪辑台的制作组。",
+        summary: "你的强项是把模糊需求压成可执行任务，并用反方、证据和流程守住质量。下一步不是学更多 Prompt，而是把自己的方法变成团队可复用模板。"
+      },
+      {
+        id: "operator",
+        min: 68,
+        type: "自动化搭台人",
+        persona: "从聊天到流水线",
+        note: "你已经开始把 AI 放进固定工作流，差一步就是把验收标准也自动化。",
+        summary: "你能看见重复工作里的流程机会，也愿意给 Agent 设置边界。短板通常在研究证据和输出审计：别让稳定流程稳定地产出半可信内容。"
+      },
+      {
+        id: "detective",
+        min: 54,
+        type: "深研侦探",
+        persona: "闻得到证据味儿",
+        note: "你对来源、口径和异常点敏感，但还需要更强的任务拆解和复用意识。",
+        summary: "你不会轻易被流畅文本骗走，这是很值钱的底层能力。下一步要把质疑变成结构：先定义问题，再查证据，再要求 AI 按证据等级输出。"
+      },
+      {
+        id: "sprinter",
+        min: 0,
+        type: "提示词冲浪手",
+        persona: "启动快，刹车要练",
+        note: "你很愿意用 AI 提速，但偶尔会把“先生成”当成“已完成”。",
+        summary: "你的优势是行动快，不会被工具门槛卡住。真正的升级点是：每次开聊前多写一句验收标准，每次交付前多做一次反方检查。"
+      }
+    ];
+
+    const styleProfiles = {
+      director: "总导演倾向",
+      operator: "流程搭台倾向",
+      detective: "深研审计倾向",
+      guardian: "风险护栏倾向",
+      explorer: "探索试错倾向",
+      apprentice: "模板学习倾向",
+      sprinter: "快速启动倾向"
+    };
+
+    const state = {
+      index: 0,
+      answers: [],
+      scores: Object.fromEntries(Object.keys(dimensions).map((key) => [key, 0])),
+      style: {},
+      isSample: false
+    };
+
+    const els = {
+      statusPill: document.querySelector("#statusPill"),
+      startScreen: document.querySelector("#startScreen"),
+      quizScreen: document.querySelector("#quizScreen"),
+      resultScreen: document.querySelector("#resultScreen"),
+      startBtn: document.querySelector("#startBtn"),
+      progressText: document.querySelector("#progressText"),
+      paceText: document.querySelector("#paceText"),
+      progressBar: document.querySelector("#progressBar"),
+      questionCode: document.querySelector("#questionCode"),
+      dimensionChip: document.querySelector("#dimensionChip"),
+      questionTitle: document.querySelector("#questionTitle"),
+      choices: document.querySelector("#choices"),
+      microFeedback: document.querySelector("#microFeedback"),
+      resultType: document.querySelector("#resultType"),
+      resultSummary: document.querySelector("#resultSummary"),
+      resultScore: document.querySelector("#resultScore"),
+      resultPersona: document.querySelector("#resultPersona"),
+      resultPersonaNote: document.querySelector("#resultPersonaNote"),
+      bars: document.querySelector("#bars"),
+      shareCanvas: document.querySelector("#shareCanvas"),
+      downloadTopBtn: document.querySelector("#downloadTopBtn"),
+      downloadBtn: document.querySelector("#downloadBtn"),
+      restartBtn: document.querySelector("#restartBtn"),
+      prevBtn: document.querySelector("#prevBtn"),
+      nextBtn: document.querySelector("#nextBtn"),
+      progressTrack: document.querySelector("#progressTrack"),
+      sampleBadge: document.querySelector("#sampleBadge"),
+      styleMode: document.querySelector("#styleMode"),
+      toast: document.querySelector("#toast")
+    };
+
+    function showScreen(screen) {
+      [els.startScreen, els.quizScreen, els.resultScreen].forEach((item) => item.classList.remove("active"));
+      screen.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function resetState() {
+      state.index = 0;
+      state.answers = [];
+      state.scores = Object.fromEntries(Object.keys(dimensions).map((key) => [key, 0]));
+      state.style = {};
+      state.isSample = false;
+    }
+
+    function recomputeScores() {
+      state.scores = Object.fromEntries(Object.keys(dimensions).map((key) => [key, 0]));
+      state.style = {};
+      state.answers.forEach((option) => {
+        if (!option) return;
+        Object.entries(option.scores).forEach(([key, value]) => {
+          state.scores[key] += value;
+        });
+        state.style[option.style] = (state.style[option.style] || 0) + 1;
+      });
+    }
+
+    function startQuiz() {
+      resetState();
+      els.statusPill.textContent = "LIVE";
+      showScreen(els.quizScreen);
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const question = questions[state.index];
+      const progress = (state.index + 1) / questions.length;
+      const selectedOption = state.answers[state.index];
+      els.progressText.textContent = `第 ${state.index + 1} / ${questions.length} 题`;
+      els.paceText.textContent = "";
+      els.progressBar.style.width = `${Math.round(progress * 100)}%`;
+      els.progressTrack.setAttribute("aria-valuenow", String(Math.round(progress * 100)));
+      els.questionCode.textContent = `ROUND ${String(state.index + 1).padStart(2, "0")}`;
+      els.dimensionChip.textContent = dimensions[question.dim];
+      els.questionTitle.textContent = question.title;
+      els.microFeedback.textContent = selectedOption ? selectedOption.feedback : "";
+      els.choices.innerHTML = "";
+      question.options.forEach((option, optionIndex) => {
+        const button = document.createElement("button");
+        button.className = "choice";
+        button.type = "button";
+        button.setAttribute("role", "radio");
+        button.setAttribute("aria-checked", option === selectedOption ? "true" : "false");
+        button.setAttribute("aria-describedby", "microFeedback");
+        button.innerHTML = `<span class="choice-key">${"ABCD"[optionIndex]}</span><span class="choice-text">${option.text}</span>`;
+        button.addEventListener("click", () => chooseOption(option));
+        els.choices.appendChild(button);
+      });
+      updateQuestionControls();
+      window.requestAnimationFrame(() => els.questionTitle.focus({ preventScroll: true }));
+    }
+
+    function chooseOption(option) {
+      state.answers[state.index] = option;
+      recomputeScores();
+      els.microFeedback.textContent = option.feedback;
+      const question = questions[state.index];
+      [...els.choices.querySelectorAll("button")].forEach((button, index) => {
+        button.setAttribute("aria-checked", question.options[index] === option ? "true" : "false");
+      });
+      updateQuestionControls();
+      els.nextBtn.focus();
+    }
+
+    function updateQuestionControls() {
+      const hasAnswer = Boolean(state.answers[state.index]);
+      els.prevBtn.disabled = state.index === 0;
+      els.nextBtn.disabled = !hasAnswer;
+      els.nextBtn.textContent = state.index === questions.length - 1 ? "看结果" : "下一题";
+      els.paceText.textContent = "";
+    }
+
+    function goNext() {
+      if (!state.answers[state.index]) {
+        showToast("未选择");
+        return;
+      }
+      if (state.index >= questions.length - 1) {
+        showResult(false);
+        return;
+      }
+      state.index += 1;
+      renderQuestion();
+    }
+
+    function goPrev() {
+      if (state.index === 0) return;
+      state.index -= 1;
+      renderQuestion();
+    }
+
+    function getScoreData() {
+      const maxScores = { framing: 10, prompt: 8, research: 7, judgment: 17, workflow: 10, risk: 12 };
+      const normalized = {};
+      Object.keys(dimensions).forEach((key) => {
+        normalized[key] = Math.min(100, Math.round((state.scores[key] / maxScores[key]) * 100));
+      });
+      const total = Math.round(Object.values(normalized).reduce((sum, item) => sum + item, 0) / Object.keys(normalized).length);
+      const weakest = Object.entries(normalized).sort((a, b) => a[1] - b[1]).slice(0, 3).map(([key]) => key);
+      const topStyle = Object.entries(state.style).sort((a, b) => b[1] - a[1])[0]?.[0] || "sprinter";
+      const result = resultTypes.find((item) => total >= item.min) || resultTypes[resultTypes.length - 1];
+      return { normalized, total, weakest, topStyle, result, isSample: state.isSample };
+    }
+
+    function showResult(sample = false) {
+      if (sample) {
+        resetState();
+        state.scores = { framing: 8, prompt: 7, research: 6, judgment: 14, workflow: 8, risk: 10 };
+        state.style = { director: 4, detective: 3, operator: 2, guardian: 1 };
+        state.isSample = true;
+      }
+      const data = getScoreData();
+      els.statusPill.textContent = sample ? "SAMPLE" : "DONE";
+      els.progressBar.style.width = "100%";
+      els.progressTrack.setAttribute("aria-valuenow", "100");
+      els.resultType.textContent = data.result.type;
+      els.resultSummary.textContent = data.result.summary;
+      els.resultScore.textContent = data.total;
+      els.resultPersona.textContent = data.result.persona;
+      els.resultPersonaNote.textContent = data.result.note;
+      els.styleMode.textContent = styleProfiles[data.topStyle] || styleProfiles.sprinter;
+      els.sampleBadge.hidden = !sample;
+      [els.downloadTopBtn, els.downloadBtn].forEach((button) => {
+        button.disabled = sample;
+        button.textContent = sample ? "不可保存" : "保存分享图";
+      });
+      els.restartBtn.textContent = sample ? "开始测我的结果" : "重新测一次";
+      renderBars(data.normalized);
+      drawShareCard(data);
+      showScreen(els.resultScreen);
+      window.requestAnimationFrame(() => els.resultType.focus({ preventScroll: true }));
+    }
+
+    function renderBars(normalized) {
+      els.bars.innerHTML = "";
+      Object.entries(dimensions).forEach(([key, label]) => {
+        const value = normalized[key];
+        const item = document.createElement("div");
+        item.className = "bar-item";
+        item.innerHTML = `<span>${label}</span><div class="bar-track"><div class="bar-fill" style="width:${value}%"></div></div><strong>${value}</strong>`;
+        els.bars.appendChild(item);
+      });
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 8) {
+      const chars = Array.from(text);
+      let line = "";
+      let lines = [];
+      chars.forEach((char) => {
+        const testLine = line + char;
+        if (ctx.measureText(testLine).width > maxWidth && line) {
+          lines.push(line);
+          line = char;
+        } else {
+          line = testLine;
+        }
+      });
+      if (line) lines.push(line);
+      lines = lines.slice(0, maxLines);
+      lines.forEach((item, index) => ctx.fillText(item, x, y + index * lineHeight));
+      return y + lines.length * lineHeight;
+    }
+
+    function roundedRect(ctx, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+    }
+
+    function drawShareCard(data) {
+      const canvas = els.shareCanvas;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.fillStyle = "#f7f6ef";
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(17,19,15,.09)";
+      ctx.lineWidth = 2;
+      for (let x = 0; x < w; x += 48) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 48) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "#a5ff3f";
+      ctx.beginPath();
+      ctx.arc(164, 142, 138, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#2f8cff";
+      ctx.beginPath();
+      ctx.arc(926, 118, 96, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = .22;
+      ctx.fillStyle = "#ff695c";
+      ctx.beginPath();
+      ctx.arc(972, 1304, 124, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = "#11130f";
+      ctx.font = "900 34px Avenir Next, PingFang SC, sans-serif";
+      ctx.fillText("AI ABILITY SNAP TEST", 76, 96);
+      if (data.isSample) {
+        ctx.fillStyle = "#ffd84d";
+        roundedRect(ctx, 698, 54, 296, 58, 29);
+        ctx.fill();
+        ctx.strokeStyle = "#11130f";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.fillStyle = "#11130f";
+        ctx.font = "900 25px Avenir Next, PingFang SC, sans-serif";
+        ctx.fillText("示例结果 · 非本人", 730, 92);
+      }
+      ctx.font = "900 88px Avenir Next, PingFang SC, sans-serif";
+      wrapText(ctx, data.result.type, 76, 216, 760, 92, 3);
+
+      ctx.fillStyle = "#ffffff";
+      roundedRect(ctx, 76, 474, 928, 246, 28);
+      ctx.fill();
+      ctx.strokeStyle = "#11130f";
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      ctx.fillStyle = "#11130f";
+      ctx.font = "950 120px Avenir Next, PingFang SC, sans-serif";
+      ctx.fillText(String(data.total), 118, 622);
+      ctx.font = "900 30px Avenir Next, PingFang SC, sans-serif";
+      ctx.fillText("/ 100", 306, 616);
+      ctx.font = "800 34px Avenir Next, PingFang SC, sans-serif";
+      wrapText(ctx, data.result.persona, 474, 564, 450, 42, 2);
+      ctx.fillStyle = "#666b5e";
+      ctx.font = "700 26px Avenir Next, PingFang SC, sans-serif";
+      wrapText(ctx, data.result.note, 474, 636, 438, 34, 2);
+
+      const barStart = 816;
+      Object.entries(dimensions).forEach(([key, label], index) => {
+        const y = barStart + index * 70;
+        const value = data.normalized[key];
+        ctx.fillStyle = "#11130f";
+        ctx.font = "850 25px Avenir Next, PingFang SC, sans-serif";
+        ctx.fillText(label, 76, y);
+        ctx.strokeStyle = "#11130f";
+        ctx.lineWidth = 4;
+        roundedRect(ctx, 246, y - 24, 640, 28, 14);
+        ctx.stroke();
+        const colors = ["#a5ff3f", "#2f8cff", "#ff695c", "#ffd84d", "#8c6bff", "#31d7a9"];
+        const fillWidth = value > 0 ? Math.max(20, (632 * value) / 100) : 0;
+        if (fillWidth > 0) {
+          ctx.fillStyle = colors[index];
+          roundedRect(ctx, 250, y - 20, fillWidth, 20, 10);
+          ctx.fill();
+        }
+        ctx.fillStyle = "#11130f";
+        ctx.font = "900 24px Avenir Next, PingFang SC, sans-serif";
+        ctx.fillText(String(value), 914, y);
+      });
+
+      ctx.fillStyle = "#11130f";
+      ctx.font = "900 34px Avenir Next, PingFang SC, sans-serif";
+      wrapText(ctx, styleProfiles[data.topStyle] || styleProfiles.sprinter, 76, 1294, 890, 42, 2);
+
+      ctx.fillStyle = "#11130f";
+      ctx.font = "800 24px Avenir Next, PingFang SC, sans-serif";
+      ctx.fillText("AI 能力快测局 · 2026", 76, 1400);
+    }
+
+    function canvasToBlob(canvas) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("canvas.toBlob failed"));
+        }, "image/png");
+      });
+    }
+
+    async function downloadShareCard() {
+      if (state.isSample) {
+        showToast("不可保存");
+        return;
+      }
+      const data = getScoreData();
+      drawShareCard(data);
+      try {
+        const blob = await canvasToBlob(els.shareCanvas);
+        const filename = `ai-ability-${data.result.id}-${data.total}.png`;
+        const file = new File([blob], filename, { type: "image/png" });
+        if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+          await navigator.share({
+            files: [file],
+            title: "AI 能力快测局",
+            text: `我的 AI 工作力指数：${data.total}/100`
+          });
+          showToast("已打开分享");
+          return;
+        }
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.download = filename;
+        link.href = url;
+        link.click();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1200);
+        showToast("已生成");
+      } catch (error) {
+        showToast("保存失败");
+      }
+    }
+
+    function showToast(text) {
+      els.toast.textContent = text;
+      els.toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => els.toast.classList.remove("show"), 2400);
+    }
+
+    els.startBtn.addEventListener("click", startQuiz);
+    els.prevBtn.addEventListener("click", goPrev);
+    els.nextBtn.addEventListener("click", goNext);
+    els.restartBtn.addEventListener("click", () => {
+      resetState();
+      els.statusPill.textContent = "READY";
+      els.restartBtn.textContent = "重新测一次";
+      showScreen(els.startScreen);
+    });
+    els.downloadTopBtn.addEventListener("click", downloadShareCard);
+    els.downloadBtn.addEventListener("click", downloadShareCard);
+  </script>
+</body>
+</html>
