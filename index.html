@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>AI 能力快测局｜测测你的 AI 协作段位</title>
+  <title>AI 能力快测局挑战版｜测测你的 AI 协作段位</title>
   <meta name="description" content="10 道短题，60 秒测出你的 AI 协作段位：任务表达、信息判断、Agent 控制、自动化边界，一次拿到你的 AI 人格卡。">
   <link rel="canonical" href="https://www.au-rion.com/">
   <meta name="theme-color" content="#a5ff3f">
-  <meta itemprop="name" content="AI 能力快测局｜测测你的 AI 协作段位">
+  <meta itemprop="name" content="AI 能力快测局挑战版｜测测你的 AI 协作段位">
   <meta itemprop="description" content="10 道短题，60 秒测出你的 AI 协作段位，并生成可分享的 AI 人格卡。">
   <meta itemprop="image" content="https://www.au-rion.com/share-card.png">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="zh_CN">
   <meta property="og:site_name" content="AI 能力快测局">
-  <meta property="og:title" content="AI 能力快测局｜测测你的 AI 协作段位">
+  <meta property="og:title" content="AI 能力快测局挑战版｜测测你的 AI 协作段位">
   <meta property="og:description" content="10 道短题，60 秒测出你的 AI 协作段位，并生成可分享的 AI 人格卡。">
   <meta property="og:url" content="https://www.au-rion.com/">
   <meta property="og:image" content="https://www.au-rion.com/share-card.png">
@@ -23,7 +23,7 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="AI 能力快测局分享封面">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="AI 能力快测局｜测测你的 AI 协作段位">
+  <meta name="twitter:title" content="AI 能力快测局挑战版｜测测你的 AI 协作段位">
   <meta name="twitter:description" content="10 道短题，60 秒测出你的 AI 协作段位，并生成可分享的 AI 人格卡。">
   <meta name="twitter:image" content="https://www.au-rion.com/share-card.png">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23a5ff3f'/%3E%3Cpath d='M16 43 31 12l17 40-17-10z' fill='%2311130f'/%3E%3C/svg%3E">
@@ -161,6 +161,11 @@
       padding: 22px 0 8px;
     }
 
+    .hero-main {
+      display: grid;
+      gap: 14px;
+    }
+
     .hero-kicker,
     .section-kicker {
       width: fit-content;
@@ -173,6 +178,21 @@
       font-weight: 900;
       letter-spacing: .08em;
       text-transform: uppercase;
+    }
+
+    .challenge-badge {
+      width: fit-content;
+      padding: 8px 12px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--coral);
+      color: #fff;
+      box-shadow: 4px 4px 0 var(--ink);
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0;
+      transform: rotate(-2deg);
     }
 
     h1,
@@ -196,14 +216,6 @@
       font-size: clamp(16px, 4.2vw, 22px);
       line-height: 1.5;
       font-weight: 650;
-    }
-
-    .privacy-note {
-      max-width: 520px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-      font-weight: 700;
     }
 
     .hero-grid {
@@ -824,11 +836,11 @@
         <div class="hero">
           <div class="hero-main">
             <div class="hero-kicker">AI ABILITY SNAP TEST</div>
+            <div class="challenge-badge" aria-label="挑战版，难度提升">挑战版 · 难度提升</div>
             <h1>你是 AI 玩家，还是 AI 项目经理？</h1>
             <div class="hero-actions">
               <button class="primary-action" id="startBtn">开始快测</button>
             </div>
-            <p class="privacy-note">无需登录。会记录匿名访问来源和大致地区，用于统计传播效果，不保存原始 IP。</p>
             </div>
           </div>
         </div>
@@ -1491,7 +1503,7 @@
 
       ctx.fillStyle = "#11130f";
       ctx.font = "900 34px Avenir Next, PingFang SC, sans-serif";
-      ctx.fillText("AI ABILITY SNAP TEST", 76, 96);
+      ctx.fillText("AI ABILITY SNAP TEST · 挑战版", 76, 96);
       if (data.isSample) {
         ctx.fillStyle = "#ffd84d";
         roundedRect(ctx, 698, 54, 296, 58, 29);
