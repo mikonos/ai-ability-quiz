@@ -1146,7 +1146,7 @@
       els.questionCode.textContent = `ROUND ${String(state.index + 1).padStart(2, "0")}`;
       els.dimensionChip.textContent = dimensions[question.dim];
       els.questionTitle.textContent = question.title;
-      els.microFeedback.textContent = selectedOption ? selectedOption.feedback : "";
+      els.microFeedback.textContent = selectedOption ? "已选择。继续下一题，最后一起看解析。" : "选一个最像你真实反应的动作。";
       els.choices.innerHTML = "";
       question.options.forEach((option, optionIndex) => {
         const button = document.createElement("button");
@@ -1166,7 +1166,7 @@
     function chooseOption(option) {
       state.answers[state.index] = option;
       recomputeScores();
-      els.microFeedback.textContent = option.feedback;
+      els.microFeedback.textContent = "已选择。继续下一题，最后一起看解析。";
       const question = questions[state.index];
       [...els.choices.querySelectorAll("button")].forEach((button, index) => {
         button.setAttribute("aria-checked", question.options[index] === option ? "true" : "false");
