@@ -505,6 +505,7 @@
     .result-header,
     .score-row,
     .bars,
+    .review-panel,
     .advice-list,
     .share-preview {
       position: relative;
@@ -635,6 +636,128 @@
     .bar-item:nth-child(4) .bar-fill { background: var(--yellow); }
     .bar-item:nth-child(5) .bar-fill { background: var(--violet); }
     .bar-item:nth-child(6) .bar-fill { background: #31d7a9; }
+
+    .review-panel {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .92), rgba(239, 247, 255, .92)),
+        linear-gradient(90deg, rgba(17, 19, 15, .04) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(17, 19, 15, .04) 1px, transparent 1px);
+      background-size: auto, 22px 22px, 22px 22px;
+      box-shadow: var(--shadow), 6px 6px 0 var(--ink);
+    }
+
+    .review-head {
+      display: grid;
+      gap: 10px;
+    }
+
+    .review-head .section-kicker {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .review-head h3 {
+      margin: 10px 0 0;
+      font-size: clamp(28px, 8vw, 48px);
+      line-height: .96;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .review-head p {
+      color: #353a31;
+      font-size: 14px;
+      line-height: 1.55;
+      font-weight: 750;
+    }
+
+    .review-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .review-item {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 2px solid var(--ink);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, .88);
+      box-shadow: 4px 4px 0 rgba(17, 19, 15, .16);
+    }
+
+    .review-item-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .review-round {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .review-score {
+      flex: 0 0 auto;
+      padding: 6px 9px;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      background: var(--yellow);
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 950;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .review-question {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.35;
+      font-weight: 950;
+    }
+
+    .review-choice {
+      display: grid;
+      gap: 6px;
+      padding: 10px 11px;
+      border-left: 5px solid var(--ink);
+      background: rgba(165, 255, 63, .16);
+      color: #34382f;
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 760;
+    }
+
+    .review-choice.best {
+      background: rgba(47, 140, 255, .12);
+      border-left-color: var(--blue);
+    }
+
+    .review-choice strong {
+      color: var(--ink);
+      font-weight: 950;
+    }
+
+    .review-empty {
+      padding: 14px;
+      border: 2px dashed rgba(17, 19, 15, .34);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, .7);
+      color: #34382f;
+      font-size: 14px;
+      line-height: 1.5;
+      font-weight: 760;
+    }
 
     .advice-list {
       display: grid;
@@ -776,7 +899,8 @@
       }
 
       .question-panel,
-      .result-card {
+      .result-card,
+      .review-panel {
         padding: 24px;
       }
 
@@ -792,6 +916,18 @@
       .result-layout {
         grid-template-columns: 1.1fr .9fr;
         align-items: start;
+      }
+
+      .review-panel {
+        grid-column: 1;
+      }
+
+      .share-preview {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        margin-top: 0;
+        position: sticky;
+        top: 28px;
       }
 
       .result-actions {
@@ -899,6 +1035,17 @@
 
             <div class="bars" id="bars"></div>
           </article>
+
+          <section class="review-panel" id="reviewPanel" aria-labelledby="reviewTitle">
+            <div class="review-head">
+              <div>
+                <p class="section-kicker">ANSWER REVIEW</p>
+                <h3 id="reviewTitle">逐题复盘</h3>
+              </div>
+              <p id="reviewSummary">每一题都不是单纯对错，而是在看你是否抓住了关键证据、边界和验证动作。</p>
+            </div>
+            <div class="review-list" id="reviewList"></div>
+          </section>
 
           <aside class="share-preview">
             <canvas id="shareCanvas" width="1080" height="1440" aria-label="测评结果分享图预览"></canvas>
@@ -1116,6 +1263,8 @@
       resultPersona: document.querySelector("#resultPersona"),
       resultPersonaNote: document.querySelector("#resultPersonaNote"),
       bars: document.querySelector("#bars"),
+      reviewSummary: document.querySelector("#reviewSummary"),
+      reviewList: document.querySelector("#reviewList"),
       shareCanvas: document.querySelector("#shareCanvas"),
       downloadTopBtn: document.querySelector("#downloadTopBtn"),
       downloadBtn: document.querySelector("#downloadBtn"),
@@ -1319,6 +1468,16 @@
       ]));
     }
 
+    function getOptionScore(option) {
+      return Object.values(option.scores).reduce((sum, value) => sum + value, 0);
+    }
+
+    function getBestOption(question) {
+      return question.options
+        .map((option, index) => ({ option, index, score: getOptionScore(option) }))
+        .sort((a, b) => b.score - a.score)[0];
+    }
+
     function getScoreData() {
       const maxScores = getMaxScores();
       const normalized = {};
@@ -1357,6 +1516,7 @@
       });
       els.restartBtn.textContent = sample ? "开始测我的结果" : "重新测一次";
       renderBars(data.normalized);
+      renderAnswerReview(data);
       drawShareCard(data);
       if (!sample) {
         trackEvent("quiz_complete", {
@@ -1401,6 +1561,70 @@
         item.className = "bar-item";
         item.innerHTML = `<span>${label}</span><div class="bar-track"><div class="bar-fill" style="width:${value}%"></div></div><strong>${value}</strong>`;
         els.bars.appendChild(item);
+      });
+    }
+
+    function renderAnswerReview(data) {
+      els.reviewList.innerHTML = "";
+      if (data.isSample || state.answers.length < questions.length) {
+        els.reviewSummary.textContent = "完成一轮正式测评后，这里会显示 10 道题的选择解析、得分差距和高手做法。";
+        const empty = document.createElement("p");
+        empty.className = "review-empty";
+        empty.textContent = "当前是示例结果，没有真实答题记录。开始正式测评后，结果页会逐题展开解析。";
+        els.reviewList.appendChild(empty);
+        return;
+      }
+
+      els.reviewSummary.textContent = "每题都回看你的真实选择：它为什么可行、差在哪一步，以及高手会补哪条证据或边界。";
+      questions.forEach((question, questionIndex) => {
+        const selected = state.answers[questionIndex];
+        const selectedIndex = question.options.indexOf(selected);
+        const selectedScore = getOptionScore(selected);
+        const best = getBestOption(question);
+        const item = document.createElement("article");
+        item.className = "review-item";
+
+        const head = document.createElement("div");
+        head.className = "review-item-head";
+
+        const round = document.createElement("span");
+        round.className = "review-round";
+        round.textContent = `ROUND ${String(questionIndex + 1).padStart(2, "0")} · ${dimensions[question.dim]}`;
+
+        const score = document.createElement("span");
+        score.className = "review-score";
+        score.textContent = `${selectedScore}/${best.score} 分`;
+
+        head.append(round, score);
+
+        const title = document.createElement("h4");
+        title.className = "review-question";
+        title.textContent = question.title;
+
+        const chosen = document.createElement("div");
+        chosen.className = "review-choice";
+        const chosenLabel = document.createElement("strong");
+        chosenLabel.textContent = `你的选择 ${"ABCD"[selectedIndex]}：${selected.text}`;
+        const chosenFeedback = document.createElement("span");
+        chosenFeedback.textContent = selected.feedback;
+        chosen.append(chosenLabel, chosenFeedback);
+
+        const bestBox = document.createElement("div");
+        bestBox.className = "review-choice best";
+        const bestLabel = document.createElement("strong");
+        if (best.option === selected) {
+          bestLabel.textContent = "高手做法：你已经选到本题最稳方案";
+        } else {
+          bestLabel.textContent = `高手做法 ${"ABCD"[best.index]}：${best.option.text}`;
+        }
+        const bestFeedback = document.createElement("span");
+        bestFeedback.textContent = best.option === selected
+          ? "关键是把这个动作迁移到真实工作里：先定决策、证据、边界，再让 AI 加速。"
+          : best.option.feedback;
+        bestBox.append(bestLabel, bestFeedback);
+
+        item.append(head, title, chosen, bestBox);
+        els.reviewList.appendChild(item);
       });
     }
 
