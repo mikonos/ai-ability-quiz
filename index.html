@@ -894,7 +894,11 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="qrcode.js"></script>
   <script>
+    const SITE_URL = "https://www.au-rion.com/";
+    const TRACKING_ENDPOINT = "https://ocny7n2gjwys.aiforce.cloud/app/app_179kdfk3fxn/api/event";
+
     const dimensions = {
       framing: "任务表达",
       prompt: "Prompt 设计",
@@ -1067,7 +1071,8 @@
       answers: [],
       scores: Object.fromEntries(Object.keys(dimensions).map((key) => [key, 0])),
       style: {},
-      isSample: false
+      isSample: false,
+      shareId: ""
     };
 
     const els = {
@@ -1102,6 +1107,87 @@
       toast: document.querySelector("#toast")
     };
 
+    function safeToken(value, fallback = "") {
+      return String(value || fallback).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 80);
+    }
+
+    function createId(prefix) {
+      const randomPart = crypto.getRandomValues(new Uint32Array(2));
+      return `${prefix}_${Date.now().toString(36)}_${Array.from(randomPart).map((item) => item.toString(36)).join("")}`;
+    }
+
+    function getOrCreateVisitorId() {
+      const key = "aiAbilityVisitorId";
+      const current = safeToken(localStorage.getItem(key));
+      if (current) return current;
+      const next = createId("v");
+      localStorage.setItem(key, next);
+      return next;
+    }
+
+    const query = new URLSearchParams(window.location.search);
+    const trackingContext = {
+      visitorId: getOrCreateVisitorId(),
+      sessionId: createId("sess"),
+      referrerId: safeToken(query.get("ref")),
+      inboundShareId: safeToken(query.get("sid")),
+      source: safeToken(query.get("src") || query.get("utm_source") || "direct", "direct"),
+      utmMedium: safeToken(query.get("utm_medium")),
+      utmCampaign: safeToken(query.get("utm_campaign")),
+      schemaVersion: safeToken(query.get("v") || "1", "1"),
+      sourceResult: safeToken(query.get("r")),
+      landingUrl: window.location.href,
+      documentReferrer: document.referrer || "",
+      language: navigator.language || "",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+      screenSize: `${window.screen.width}x${window.screen.height}`
+    };
+
+    function ensureShareId() {
+      if (!state.shareId) state.shareId = createId("share");
+      return state.shareId;
+    }
+
+    function buildShareUrl(resultId) {
+      const url = new URL(SITE_URL);
+      const shareId = ensureShareId();
+      url.searchParams.set("ref", shareId);
+      url.searchParams.set("sid", shareId);
+      url.searchParams.set("utm_source", "share_card");
+      url.searchParams.set("utm_medium", "qr");
+      url.searchParams.set("utm_campaign", "ai_ability_quiz");
+      url.searchParams.set("r", resultId);
+      url.searchParams.set("v", "1");
+      return url.toString();
+    }
+
+    function trackEvent(type, details = {}) {
+      const event = {
+        eventId: createId("evt"),
+        eventType: type,
+        occurredAt: new Date().toISOString(),
+        ...trackingContext,
+        ...details
+      };
+      if (!TRACKING_ENDPOINT) {
+        console.debug("[ai-ability-quiz:event]", event);
+        return;
+      }
+      const body = JSON.stringify(event);
+      if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: "application/json" });
+        navigator.sendBeacon(TRACKING_ENDPOINT, blob);
+        return;
+      }
+      fetch(TRACKING_ENDPOINT, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body,
+        keepalive: true,
+        mode: "cors"
+      }).catch(() => {});
+    }
+
     function showScreen(screen) {
       [els.startScreen, els.quizScreen, els.resultScreen].forEach((item) => item.classList.remove("active"));
       screen.classList.add("active");
@@ -1114,6 +1200,7 @@
       state.scores = Object.fromEntries(Object.keys(dimensions).map((key) => [key, 0]));
       state.style = {};
       state.isSample = false;
+      state.shareId = "";
     }
 
     function recomputeScores() {
@@ -1131,6 +1218,7 @@
     function startQuiz() {
       resetState();
       els.statusPill.textContent = "LIVE";
+      trackEvent("quiz_start");
       showScreen(els.quizScreen);
       renderQuestion();
     }
@@ -1212,7 +1300,8 @@
       const weakest = Object.entries(normalized).sort((a, b) => a[1] - b[1]).slice(0, 3).map(([key]) => key);
       const topStyle = Object.entries(state.style).sort((a, b) => b[1] - a[1])[0]?.[0] || "sprinter";
       const result = resultTypes.find((item) => total >= item.min) || resultTypes[resultTypes.length - 1];
-      return { normalized, total, weakest, topStyle, result, isSample: state.isSample };
+      const shareUrl = state.isSample ? SITE_URL : buildShareUrl(result.id);
+      return { normalized, total, weakest, topStyle, result, isSample: state.isSample, shareUrl };
     }
 
     function showResult(sample = false) {
@@ -1240,6 +1329,37 @@
       els.restartBtn.textContent = sample ? "开始测我的结果" : "重新测一次";
       renderBars(data.normalized);
       drawShareCard(data);
+      if (!sample) {
+        trackEvent("quiz_complete", {
+          totalScore: data.total,
+          resultId: data.result.id,
+          resultType: data.result.type,
+          topStyle: data.topStyle,
+          dimensionScores: data.normalized,
+          shareId: state.shareId,
+          shareUrl: data.shareUrl
+        });
+        trackEvent("share_card_generated", {
+          totalScore: data.total,
+          resultId: data.result.id,
+          resultType: data.result.type,
+          topStyle: data.topStyle,
+          dimensionScores: data.normalized,
+          shareId: state.shareId,
+          shareUrl: data.shareUrl
+        });
+        if (trackingContext.referrerId) {
+          trackEvent("referral_completion", {
+            totalScore: data.total,
+            resultId: data.result.id,
+            resultType: data.result.type,
+            topStyle: data.topStyle,
+            dimensionScores: data.normalized,
+            shareId: state.shareId,
+            shareUrl: data.shareUrl
+          });
+        }
+      }
       showScreen(els.resultScreen);
       window.requestAnimationFrame(() => els.resultType.focus({ preventScroll: true }));
     }
@@ -1283,6 +1403,42 @@
       ctx.arcTo(x, y + height, x, y, r);
       ctx.arcTo(x, y, x + width, y, r);
       ctx.closePath();
+    }
+
+    function drawQrCode(ctx, text, x, y, size) {
+      ctx.fillStyle = "#ffffff";
+      roundedRect(ctx, x - 12, y - 12, size + 24, size + 24, 24);
+      ctx.fill();
+      ctx.strokeStyle = "#11130f";
+      ctx.lineWidth = 5;
+      ctx.stroke();
+
+      if (typeof qrcode !== "function") {
+        ctx.fillStyle = "#11130f";
+        ctx.font = "800 22px Avenir Next, PingFang SC, sans-serif";
+        wrapText(ctx, text, x + 10, y + 52, size - 20, 30, 4);
+        return;
+      }
+
+      const qr = qrcode(0, "M");
+      qr.addData(text);
+      qr.make();
+      const moduleCount = qr.getModuleCount();
+      const quiet = 4;
+      const cellSize = size / (moduleCount + quiet * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x, y, size, size);
+      ctx.fillStyle = "#11130f";
+      for (let row = 0; row < moduleCount; row += 1) {
+        for (let col = 0; col < moduleCount; col += 1) {
+          if (!qr.isDark(row, col)) continue;
+          const left = Math.round(x + (col + quiet) * cellSize);
+          const top = Math.round(y + (row + quiet) * cellSize);
+          const right = Math.ceil(x + (col + quiet + 1) * cellSize);
+          const bottom = Math.ceil(y + (row + quiet + 1) * cellSize);
+          ctx.fillRect(left, top, right - left, bottom - top);
+        }
+      }
     }
 
     function drawShareCard(data) {
@@ -1384,11 +1540,16 @@
 
       ctx.fillStyle = "#11130f";
       ctx.font = "900 34px Avenir Next, PingFang SC, sans-serif";
-      wrapText(ctx, styleProfiles[data.topStyle] || styleProfiles.sprinter, 76, 1294, 890, 42, 2);
+      wrapText(ctx, styleProfiles[data.topStyle] || styleProfiles.sprinter, 76, 1278, 610, 42, 2);
 
       ctx.fillStyle = "#11130f";
       ctx.font = "800 24px Avenir Next, PingFang SC, sans-serif";
       ctx.fillText("AI 能力快测局 · 2026", 76, 1400);
+
+      ctx.fillStyle = "#11130f";
+      ctx.font = "900 25px Avenir Next, PingFang SC, sans-serif";
+      drawQrCode(ctx, data.shareUrl, 806, 1190, 176);
+      ctx.fillText("扫码测你的 AI 段位", 776, 1410);
     }
 
     function canvasToBlob(canvas) {
@@ -1415,7 +1576,14 @@
           await navigator.share({
             files: [file],
             title: "AI 能力快测局",
-            text: `我的 AI 工作力指数：${data.total}/100`
+            text: `我的 AI 工作力指数：${data.total}/100`,
+            url: data.shareUrl
+          });
+          trackEvent("native_share_opened", {
+            totalScore: data.total,
+            resultId: data.result.id,
+            shareId: state.shareId,
+            shareUrl: data.shareUrl
           });
           showToast("已打开分享");
           return;
@@ -1425,6 +1593,12 @@
         link.download = filename;
         link.href = url;
         link.click();
+        trackEvent("share_image_saved", {
+          totalScore: data.total,
+          resultId: data.result.id,
+          shareId: state.shareId,
+          shareUrl: data.shareUrl
+        });
         window.setTimeout(() => URL.revokeObjectURL(url), 1200);
         showToast("已生成");
       } catch (error) {
@@ -1450,6 +1624,9 @@
     });
     els.downloadTopBtn.addEventListener("click", downloadShareCard);
     els.downloadBtn.addEventListener("click", downloadShareCard);
+    trackEvent(trackingContext.referrerId ? "referral_landing" : "page_view", {
+      referred: Boolean(trackingContext.referrerId)
+    });
   </script>
 </body>
 </html>
