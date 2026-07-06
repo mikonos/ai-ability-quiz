@@ -841,9 +841,9 @@
             <div class="hero-actions">
               <button class="primary-action" id="startBtn">开始快测</button>
             </div>
-            </div>
           </div>
         </div>
+      </div>
 
       <div class="screen" id="quizScreen">
         <div class="quiz-shell">
@@ -932,112 +932,112 @@
     const questions = [
       {
         dim: "framing",
-        title: "明早 9 点老板要听竞品结论，资料只够看 3 家。你先让 AI 做什么？",
-        context: "难点不是写得快，而是在模糊 deadline 下先定义可决策的问题。",
+        title: "明早要交竞品判断，只能看 3 家。老板真正想知道“要不要跟进某个打法”。你第一步怎么用 AI？",
+        context: "难点不是写得快，而是在模糊 deadline 下先把任务压成可决策问题。",
         options: [
-          { text: "让 AI 先列竞品分析框架，再按框架快速填三家公开资料。", scores: { framing: 1, prompt: 1, research: 1 }, style: "apprentice", feedback: "能开工，但框架仍可能是通用模板，未必服务老板要做的判断。" },
-          { text: "先把老板可能要做的决策写成 2 个判断题：该跟谁学、避开什么坑；再让 AI 按证据等级填表。", scores: { framing: 3, prompt: 2, judgment: 1 }, style: "director", feedback: "这像先定镜头语言：模型负责补证据，你负责定义要回答的问题。" },
-          { text: "让 AI 找行业常见竞品维度，选 5 个看起来最专业的维度做比较。", scores: { prompt: 1, research: 1 }, style: "explorer", feedback: "专业感有了，但维度可能在替老板的问题表演，而不是回答它。" },
-          { text: "先做一页 rough cut：竞品池、已知证据、未知项、今天不研究什么，确认后再深挖。", scores: { framing: 2, workflow: 1, judgment: 1 }, style: "operator", feedback: "这是成熟的半成品思维：先让不确定性上桌，再让 AI 加速。" }
+          { text: "先让 AI 生成一版分析框架和初步假设，再用 3 家公开资料快速填充。", scores: { framing: 1, prompt: 1, research: 1 }, style: "apprentice", feedback: "能启动，但框架可能只是行业模板，未必回答“要不要跟进”。" },
+          { text: "先把问题改写成 2 个决策句，并设证据截止线、不研究范围，再让 AI 填证据表。", scores: { framing: 3, prompt: 2, judgment: 1 }, style: "director", feedback: "这是把任务先编译成可验收判断，再让模型补证据。" },
+          { text: "先收集官网、定价页、案例页，让 AI 归纳三家共同打法和差异打法。", scores: { research: 2, prompt: 1 }, style: "explorer", feedback: "归纳会有用，但还缺决策问题和证据截止线。" },
+          { text: "先做一页 rough cut：结论假设、支持证据、缺口和需老板确认的取舍。", scores: { framing: 2, workflow: 1, risk: 1 }, style: "operator", feedback: "这是成熟的半成品思维：先把不确定性放上桌。" }
         ]
       },
       {
         dim: "prompt",
-        title: "80 页报告里混着旧数据、广告话术和真洞察，你要给老板一页结论。Prompt 怎么写？",
+        title: "80 页 PDF 里混着旧数据、广告话术和真洞察。你要压成一页给老板，Prompt 怎么下？",
         context: "长文档任务不只考总结能力，更考证据分级、引用边界和不确定性处理。",
         options: [
-          { text: "按章节总结，再把每章浓缩成一句话，最后合并成一页。", scores: { prompt: 1, research: 1 }, style: "apprentice", feedback: "结构清楚，但它还没区分旧数据、观点和可引用事实。" },
-          { text: "先让 AI 标出事实、作者观点、营销话术和过期数据，再只基于可引用事实写结论。", scores: { prompt: 3, research: 2, judgment: 1 }, style: "director", feedback: "这是给模型装筛子：先分证据等级，再谈结论。" },
-          { text: "让 AI 提炼 10 个最震撼的结论，优先保留有数字的。", scores: { research: 1, prompt: 1 }, style: "explorer", feedback: "数字会制造确定感，但震撼不等于可信。" },
-          { text: "先让 AI 做摘要，再用另一个模型挑错和补漏。", scores: { prompt: 1, judgment: 1 }, style: "detective", feedback: "双模型有帮助，但如果第一步没有引用规则，第二步也可能只是互相背书。" }
+          { text: "按章节总结，每章保留页码和关键数字，再合并成一页。", scores: { prompt: 2, research: 1 }, style: "apprentice", feedback: "比纯摘要可靠，但还没判断旧数据是否仍可引用。" },
+          { text: "先做证据表：事实/观点/话术/过期数据/页码；旧但唯一的数据单列适用条件。", scores: { prompt: 3, research: 2, judgment: 2 }, style: "director", feedback: "这是给长上下文加证据纪律：先分级，再结论。" },
+          { text: "先让 AI 抽 10 个反直觉结论，再逐条补页码、数字和图表来源。", scores: { research: 2, prompt: 1 }, style: "explorer", feedback: "很像高手动作，但顺序错了：先挑结论容易带偏证据。" },
+          { text: "让两个模型分别总结和挑错，保留双方都认可且有引用的结论。", scores: { prompt: 1, judgment: 2, workflow: 1 }, style: "detective", feedback: "双模型能抓部分错，但不能替代证据分级。" }
         ]
       },
       {
         dim: "research",
-        title: "两个市场规模数字相差 5 倍，下午要给 CEO 讲。你怎么处理？",
+        title: "两个市场规模数字相差 5 倍，CEO 现场必须要一个判断口径。你怎么处理？",
         context: "深研能力不是搜更多数字，而是知道什么数字能进入决策现场。",
         options: [
-          { text: "选权威机构里最新的数字作为主口径，其他放备份页。", scores: { research: 1, judgment: 1 }, style: "apprentice", feedback: "新和权威都重要，但仍然绕不开口径是否一致。" },
-          { text: "把两个数字拆成 TAM/SAM/SOM、地域、年份、收入定义，做成区间和适用场景。", scores: { research: 3, judgment: 2, risk: 1 }, style: "detective", feedback: "这才是研究者的反射：先拆定义，再决定数字怎么上桌。" },
-          { text: "继续搜索更多报告，找到最常被引用的数字。", scores: { research: 1 }, style: "explorer", feedback: "引用次数能提示共识，但不能修复口径错位。" },
-          { text: "报告里只写趋势，不写具体规模，避免数字争议。", scores: { risk: 1, framing: 1 }, style: "operator", feedback: "回避争议有时必要，但 CEO 可能正需要你给出不确定区间。" }
+          { text: "采用更权威来源作主口径，另一个数字放备份页，现场只解释差异来自口径。", scores: { research: 1, judgment: 1 }, style: "apprentice", feedback: "权威能降噪，但不能自动修复口径错位。" },
+          { text: "拆口径后给一个决策区间和推荐口径，并标注适用场景、置信度和不可比原因。", scores: { research: 3, judgment: 2, risk: 1 }, style: "detective", feedback: "这能给 CEO 一个数字，也不假装数字比证据更确定。" },
+          { text: "再搜 3 份报告，选中位数作为现场口径，并把极端值放备份页。", scores: { research: 2, workflow: 1 }, style: "explorer", feedback: "中位数很实用，但前提仍是口径可比。" },
+          { text: "只讲增长趋势和关键驱动，把规模数字作为不确定区间留到 Q&A。", scores: { framing: 1, risk: 1 }, style: "operator", feedback: "能避免误导，但可能没有满足 CEO 的决策口径需求。" }
         ]
       },
       {
         dim: "judgment",
-        title: "AI 写出的方案很顺，但你怀疑可执行性。你先查哪类风险？",
+        title: "AI 写出的增长方案很顺，但你怀疑落不了地。你先怎么审？",
         context: "高手不会只问“有没有问题”，而是把方案送进反方、约束和真人验证里。",
         options: [
-          { text: "请 AI 从 CFO、法务、一线执行三个角色各提 2 个反对点，并标出需要真人验证的数据。", scores: { judgment: 3, prompt: 2, risk: 2 }, style: "director", feedback: "这是把模型变成预审台，再把人放回关键 verifier 位置。" },
-          { text: "让 AI 把语气改谨慎，避免承诺过满。", scores: { risk: 1 }, style: "sprinter", feedback: "语气降温不等于风险被验证，只是把坑盖得更体面。" },
-          { text: "发给同事直接看，让他们自由评论。", scores: { judgment: 1 }, style: "operator", feedback: "人脑很重要，但没有审查清单，反馈容易散成感觉。" },
-          { text: "要求 AI 补一份成本、资源和时间表，让方案看起来更完整。", scores: { framing: 1, workflow: 1 }, style: "apprentice", feedback: "完整度会上升，但如果假设错了，只是把错误包装得更细。" }
+          { text: "让 AI 找出 3 个 killer assumption，逐个指定数据或真人验证方式，再交给对应同事审。", scores: { judgment: 3, prompt: 2, risk: 2 }, style: "director", feedback: "高级审查不是多挑毛病，而是先找会让方案归零的假设。" },
+          { text: "让 AI 从 CFO、法务、一线执行各挑 3 个反对点，并补风险缓释方案。", scores: { judgment: 2, prompt: 2, risk: 1 }, style: "operator", feedback: "角色反方很有用，但还要找到最关键的验证点。" },
+          { text: "把方案发给相关同事，请他们按成本、合规、执行难度分别评论。", scores: { judgment: 2, workflow: 1 }, style: "detective", feedback: "引入人很对，但如果不先找核心假设，反馈可能分散。" },
+          { text: "要求 AI 补成本、资源、时间表和里程碑，再看哪里最容易卡住。", scores: { framing: 1, workflow: 1 }, style: "apprentice", feedback: "完整度会上升，但如果假设错了，只是把错误包装得更细。" }
         ]
       },
       {
         dim: "workflow",
-        title: "周报数据源每周变，老板关注点也会变。怎么把 AI 做成稳定流程？",
+        title: "周报每周都要写，但数据源、老板关注点和异常事件都会变。怎么把 AI 做成稳定流程？",
         context: "工具流能力不是复制 Prompt，而是把可变输入、固定检查和人工确认接起来。",
         options: [
-          { text: "维护一个周报 Prompt，每周根据老板关注点改几句。", scores: { prompt: 1, workflow: 1 }, style: "sprinter", feedback: "这是可用的手动挡 AI，但质量仍靠当周手感。" },
-          { text: "把过去 8 周周报给 AI，让它归纳固定模板。", scores: { research: 1, workflow: 1 }, style: "explorer", feedback: "历史样例能提炼套路，但不等于流程有输入门和异常门。" },
-          { text: "把流程拆成数据收集、异常检查、叙事生成、人工确认四步，每步有输入清单和失败兜底。", scores: { workflow: 3, framing: 2, judgment: 1 }, style: "operator", feedback: "这不是写周报，是把周报变成小型生产线。" },
-          { text: "做一个自动化：到点抓数据并生成草稿，人工只改文案。", scores: { workflow: 2, risk: 1 }, style: "director", feedback: "自动化有价值，但如果异常检查缺位，错数会准时出现。" }
+          { text: "维护一个高质量周报 Prompt，每周根据老板关注点和数据变化改几句。", scores: { prompt: 1, workflow: 1 }, style: "sprinter", feedback: "这是可用的手动挡 AI，但质量仍靠当周手感。" },
+          { text: "用过去 8 周周报归纳固定模板，并加入本周重点、异常数字和风险提醒。", scores: { research: 1, workflow: 2 }, style: "explorer", feedback: "已经像流程，但还缺输入契约、异常门和复测样例。" },
+          { text: "拆成数据收集、异常检查、叙事生成、人工确认四步；每步有输入清单、失败兜底和好坏样例复测。", scores: { workflow: 3, framing: 2, judgment: 1 }, style: "operator", feedback: "这不是写周报，是把周报变成可复测的小生产线。" },
+          { text: "自动抓数并生成草稿，同时把异常数字单独列出给人工确认。", scores: { workflow: 2, risk: 2 }, style: "director", feedback: "比全自动稳，但还需要输入契约和复测样例。" }
         ]
       },
       {
         dim: "risk",
-        title: "用户访谈里有真实姓名、抱怨原话和可复用洞察。你要交给 AI 整理，怎么做？",
+        title: "用户访谈里有真实姓名、抱怨原话和可复用洞察。你要交给 AI 整理，怎么最稳？",
         context: "风险意识不是不让 AI 干活，而是让数据、工具和输出各有边界。",
         options: [
-          { text: "把姓名和公司名替换掉，原文整体上传，保证信息量足够。", scores: { risk: 1, research: 1 }, style: "apprentice", feedback: "脱敏是第一层，但“整体上传”仍可能超过最小必要。" },
-          { text: "先确认授权和工具数据策略；只上传与问题有关的脱敏片段，并要求输出分清原话、改写和推断。", scores: { risk: 3, judgment: 2, prompt: 1 }, style: "guardian", feedback: "这是真护栏：输入最小化，输出可追溯，推断不冒充原话。" },
-          { text: "不传原文，只让 AI 根据你的记忆总结主题。", scores: { risk: 1 }, style: "sprinter", feedback: "风险降了，但证据链也断了，洞察可能变成回忆滤镜。" },
-          { text: "先让 AI 生成访谈分析框架，再人工把敏感内容填进结果。", scores: { framing: 1, risk: 1 }, style: "operator", feedback: "框架能帮忙，但敏感信息进入结果前仍需要引用和授权边界。" }
+          { text: "替换姓名、公司名和联系方式后，上传完整原文，保证 AI 不遗漏上下文。", scores: { risk: 1, research: 1 }, style: "apprentice", feedback: "脱敏是第一层，但整体上传仍可能超过最小必要。" },
+          { text: "确认授权和工具数据策略；只上传必要脱敏片段，要求输出区分原话、改写、推断，不能补造原话。", scores: { risk: 3, judgment: 2, prompt: 1 }, style: "guardian", feedback: "这是真护栏：输入最小化，输出可追溯，推断不冒充原话。" },
+          { text: "不传原文，只凭你的访谈记忆让 AI 总结主题和机会点。", scores: { risk: 1 }, style: "sprinter", feedback: "风险降了，但证据链也断了，洞察可能变成回忆滤镜。" },
+          { text: "让 AI 先产出访谈编码表，再由你手工把敏感内容填进表格。", scores: { framing: 1, risk: 2, workflow: 1 }, style: "operator", feedback: "框架能帮忙，但敏感信息进入结果前仍要有引用和授权边界。" }
         ]
       },
       {
         dim: "workflow",
-        title: "Agent 有浏览器和文件写入权限，要跑 30 分钟资料整理。你怎么下任务？",
+        title: "Agent 有浏览器和文件写入权限，要跑 30 分钟资料整理。你怎么避免它越跑越偏？",
         context: "Agent 协作不是放生。工具越强，越要写清权限、检查点和停机线。",
         options: [
-          { text: "给目标和资料范围，先跑 30 分钟，结束后看报告。", scores: { workflow: 1 }, style: "sprinter", feedback: "方向对时很省事，方向错时也会很完整地错下去。" },
-          { text: "写清目标、禁止动作、允许工具、证据目录、10 分钟检查点和停止条件；超范围先停问。", scores: { workflow: 3, framing: 2, risk: 2 }, style: "operator", feedback: "这就是 Agent 版项目管理：给自主性，也给刹车。" },
-          { text: "拆给 3 个 Agent 并行：搜索、总结、校对，最后合并。", scores: { workflow: 2, judgment: 1 }, style: "director", feedback: "并行能提速，但每条线仍要共享边界和证据标准。" },
-          { text: "只给只读权限，避免它乱改文件。", scores: { risk: 2, workflow: 1 }, style: "guardian", feedback: "权限收紧很关键，但过度收紧可能让任务只能看，不能产出。" }
+          { text: "写目标、资料范围和只读权限，让它先跑完 30 分钟，再统一看报告。", scores: { workflow: 1, risk: 1 }, style: "sprinter", feedback: "有边界，但缺检查点和停机线，偏了也会完整地偏下去。" },
+          { text: "先 dry-run 产物 schema，再给允许工具、证据目录、10 分钟检查点、停止条件和超范围停问。", scores: { workflow: 3, framing: 2, risk: 2 }, style: "operator", feedback: "这就是 Agent 版项目管理：先校准产物，再给自主性。" },
+          { text: "拆给 3 个 Agent 并行：搜索、总结、校对；每条线只写自己的证据文件。", scores: { workflow: 2, judgment: 1 }, style: "director", feedback: "并行能提速，但每条线仍要共享停机线和产物 schema。" },
+          { text: "只给只读权限，所有文件修改先生成 patch，由你确认后再落盘。", scores: { risk: 2, workflow: 2 }, style: "guardian", feedback: "权限收紧很关键，但还需要检查点和目标校准。" }
         ]
       },
       {
         dim: "judgment",
-        title: "AI 做的图表结论很漂亮，但你要放进董事会材料。先验什么？",
-        context: "输出判断能力不是审美，是追溯输入、计算逻辑、异常值和结论边界。",
+        title: "你让 AI 看竞品落地页截图，它给出“转化率更高”的设计结论。你先怎么验？",
+        context: "多模态能力强，但截图里能看见的事实和模型推断必须分开。",
         options: [
-          { text: "检查图表是否简洁、配色是否专业、结论是否一眼能懂。", scores: { prompt: 1 }, style: "apprentice", feedback: "表达层过关了，但董事会材料先要数字站得住。" },
-          { text: "要求 AI 说明图表为什么支持结论，并列出异常点解释。", scores: { judgment: 1, prompt: 1 }, style: "explorer", feedback: "这是好追问，但仍可能停留在图表内自圆其说。" },
-          { text: "回到源数据：核样本、口径、单位、公式和异常值，再让 AI 重述不能由图表推出的结论。", scores: { judgment: 3, research: 2, risk: 1 }, style: "detective", feedback: "这是把漂亮图表送进审计台：既查它说了什么，也查它不能说什么。" },
-          { text: "找另一个 AI 复算图表，看两边结论是否一致。", scores: { judgment: 2, workflow: 1 }, style: "director", feedback: "双算能抓一部分错，但源数据和口径仍要有人盯住。" }
+          { text: "让 AI 把页面亮点按首屏、文案、CTA、信任背书分层，并给每层改进建议。", scores: { prompt: 1, research: 1 }, style: "apprentice", feedback: "结构有了，但还没区分观察事实和效果推断。" },
+          { text: "要求 AI 标出截图中可见事实、基于事实的推断、需要数据验证的结论，再补待验证指标。", scores: { judgment: 3, research: 2, prompt: 1 }, style: "detective", feedback: "这是多模态分析的护栏：看见什么、猜了什么、还缺什么。" },
+          { text: "再给 AI 看 3 张竞品截图，让它找共同模式，并输出可借鉴设计清单。", scores: { research: 2, workflow: 1 }, style: "explorer", feedback: "加样本有帮助，但仍不能推出转化率更高。" },
+          { text: "让另一个 AI 评价这份设计分析，看看是否得出同样结论。", scores: { judgment: 1, workflow: 1 }, style: "director", feedback: "第二意见能降噪，但不能替代事实/推断分层。" }
         ]
       },
       {
         dim: "risk",
-        title: "AI 给出一条 CRM 批量修改规则，但命中两类边界客户。怎么执行？",
+        title: "AI 给出一条 CRM 批量修改规则，但命中两类边界客户。你怎么执行？",
         context: "工具调用连到真实系统后，难点不只是规则，而是影响范围、例外和回滚证据。",
         options: [
-          { text: "先全量执行，再导出修改日志，发现问题就回滚。", scores: { workflow: 1 }, style: "sprinter", feedback: "日志不是回滚方案。等发现问题时，客户状态可能已经影响下游动作。" },
-          { text: "只读预检命中名单、字段、理由、边界客户和回滚方案；人工确认边界规则后分批执行。", scores: { risk: 3, workflow: 2, judgment: 2 }, style: "guardian", feedback: "这才像真实系统操作：先看影响面，再审批例外，最后留证据。" },
-          { text: "先随机改 5 条，看结果对不对，再扩大范围。", scores: { workflow: 1, judgment: 1 }, style: "apprentice", feedback: "试跑有价值，但随机样本可能刚好绕开最危险的边界客户。" },
-          { text: "让 AI 解释规则逻辑，你确认听起来合理后执行。", scores: { framing: 1, risk: 1 }, style: "operator", feedback: "理解规则很重要，但真实系统更关心命中了谁、会影响什么。" }
+          { text: "先预检命中数量和字段，再按规则执行；执行后导出日志留作回滚依据。", scores: { workflow: 1, risk: 1 }, style: "sprinter", feedback: "预检有了，但日志不等于回滚演练。" },
+          { text: "预检命中名单、边界样本、下游影响和回滚演练；人工确认边界规则后分批执行。", scores: { risk: 3, workflow: 2, judgment: 2 }, style: "guardian", feedback: "这才像真实系统操作：先看影响面，再审批例外，最后留证据。" },
+          { text: "先抽 5 条典型客户做 dry-run，确认规则解释正确后再扩大范围。", scores: { workflow: 2, judgment: 1 }, style: "apprentice", feedback: "试跑有价值，但还要覆盖边界样本和下游影响。" },
+          { text: "让 AI 解释规则逻辑并生成 SQL where 条件，再让业务负责人确认。", scores: { framing: 1, prompt: 1, risk: 1 }, style: "operator", feedback: "理解规则重要，但真实系统更关心命中了谁、会影响什么。" }
         ]
       },
       {
         dim: "framing",
-        title: "团队预算只够做一次 AI 能力提升，你怎么选切入点？",
+        title: "团队预算只够做一次 AI 能力提升，老板要“看得见效果”。你怎么选切入点？",
         context: "团队 AI 能力不是热闹培训，而是把岗位任务变成可练、可评、可复测的能力单元。",
         options: [
-          { text: "先买统一工具和账号，让大家自然探索。", scores: { workflow: 1 }, style: "sprinter", feedback: "工具能点火，但不会自动长成岗位能力。" },
-          { text: "选一个高频岗位任务做样例：输入材料、评分标准、好坏案例、复测节奏都固化，再复制到其他任务。", scores: { framing: 3, workflow: 2, judgment: 2 }, style: "director", feedback: "这不是培训，是能力基建：先把一个任务练透，再迁移。" },
-          { text: "请最会用 AI 的人做分享，带几个炫技案例激发兴趣。", scores: { research: 1, prompt: 1 }, style: "explorer", feedback: "能点燃兴趣，但炫技离可复用能力还有一段路。" },
-          { text: "发 Prompt 模板库，要求每人本周至少试用 3 个。", scores: { prompt: 1, workflow: 1 }, style: "apprentice", feedback: "行动感很强，但模板如果不绑定岗位任务，容易用完即散。" }
+          { text: "先统一工具和账号，设一周探索期，月底收集优秀案例和节省时间数据。", scores: { workflow: 1, research: 1 }, style: "sprinter", feedback: "工具能点火，但不会自动长成岗位能力。" },
+          { text: "选一个高频岗位任务做样例：输入材料、评分表、好坏案例、复测节奏都固化，再复制到其他任务。", scores: { framing: 3, workflow: 2, judgment: 2 }, style: "director", feedback: "这不是培训，是能力基建：先把一个任务练透，再迁移。" },
+          { text: "请最会用 AI 的人做分享，拆解他的任务、输入、Prompt 和检查方式。", scores: { research: 1, prompt: 2 }, style: "explorer", feedback: "比炫技强，但还没形成可评测的岗位样例。" },
+          { text: "发 Prompt 模板库，要求每人选 1 个岗位任务套用并提交前后对比。", scores: { prompt: 1, workflow: 2 }, style: "apprentice", feedback: "开始绑定任务了，但缺统一评分表和复测节奏。" }
         ]
       }
     ];
@@ -1310,11 +1310,20 @@
       renderQuestion();
     }
 
+    function getMaxScores() {
+      return Object.fromEntries(Object.keys(dimensions).map((key) => [
+        key,
+        questions.reduce((sum, question) => (
+          sum + Math.max(...question.options.map((option) => option.scores[key] || 0))
+        ), 0)
+      ]));
+    }
+
     function getScoreData() {
-      const maxScores = { framing: 10, prompt: 8, research: 7, judgment: 17, workflow: 10, risk: 12 };
+      const maxScores = getMaxScores();
       const normalized = {};
       Object.keys(dimensions).forEach((key) => {
-        normalized[key] = Math.min(100, Math.round((state.scores[key] / maxScores[key]) * 100));
+        normalized[key] = Math.min(100, Math.round((state.scores[key] / (maxScores[key] || 1)) * 100));
       });
       const total = Math.round(Object.values(normalized).reduce((sum, item) => sum + item, 0) / Object.keys(normalized).length);
       const weakest = Object.entries(normalized).sort((a, b) => a[1] - b[1]).slice(0, 3).map(([key]) => key);
