@@ -1020,7 +1020,7 @@
             <div class="score-row">
               <div class="score-box">
                 <strong id="resultScore">0</strong>
-                <span>AI 工作力指数 / 100</span>
+                <span>AI 工作力指数</span>
               </div>
               <div class="persona-box">
                 <strong id="resultPersona"></strong>
@@ -1029,11 +1029,11 @@
               </div>
             </div>
 
+            <div class="bars" id="bars"></div>
+
             <div class="result-quick-actions">
               <button class="secondary-action" id="downloadTopBtn">保存分享图</button>
             </div>
-
-            <div class="bars" id="bars"></div>
           </article>
 
           <section class="review-panel" id="reviewPanel" aria-labelledby="reviewTitle">
@@ -1194,8 +1194,8 @@
         id: "director",
         min: 82,
         type: "AI 总导演",
-        persona: "会派活，也会验收",
-        note: "你不把 AI 当魔法棒，而是当一支需要 brief、镜头表和剪辑台的制作组。",
+        persona: "会派活，会验收",
+        note: "你不把 AI 当魔法棒，而是当一支需要任务说明、镜头表和剪辑台的制作组。",
         summary: "你的强项是把模糊需求压成可执行任务，并用反方、证据和流程守住质量。下一步不是学更多提示词，而是把自己的方法变成团队可复用模板。"
       },
       {
@@ -1460,12 +1460,14 @@
     }
 
     function getMaxScores() {
-      return Object.fromEntries(Object.keys(dimensions).map((key) => [
-        key,
-        questions.reduce((sum, question) => (
-          sum + Math.max(...question.options.map((option) => option.scores[key] || 0))
-        ), 0)
-      ]));
+      const maxScores = Object.fromEntries(Object.keys(dimensions).map((key) => [key, 0]));
+      questions.forEach((question) => {
+        const best = getBestOption(question).option;
+        Object.keys(dimensions).forEach((key) => {
+          maxScores[key] += best.scores[key] || 0;
+        });
+      });
+      return maxScores;
     }
 
     function getOptionScore(option) {
